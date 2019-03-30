@@ -1,4 +1,24 @@
 module V80
+	class NamedProc < Proc
+		attr_reader :name
+
+		def initialize(name, &block)
+			@name, @callback = name, block
+		end
+		
+		def call(*a)
+			@callback.call(*a)
+		end
+
+		def to_s
+			inspect
+		end
+
+		def inspect
+			"{PROC#{@name}}"
+		end
+	end
+
 	class Link
 		attr_reader :car, :cdr
 
@@ -18,7 +38,7 @@ module V80
 	end
 
 	def self.wrap(id, n)
-		->(r) {
+		NamedProc.new ":#{id}_D" do |r|
 			e = []
 			n.times do
 				e.unshift(r.car)
@@ -26,7 +46,7 @@ module V80
 			end
 			e.unshift(id)
 			Link.new(e, r)
-		}
+		end
 	end
 
 	class Parser
@@ -37,7 +57,7 @@ module V80
 
 		def rule(id, *p, &block)
 			f = V80.wrap(id, p.length)
-			f = ->(r) {
+			f = NamedProc.new ":#{id}" do |r|
 				a = []
 				block.arity.times do
 					a.unshift(r.car[1])
@@ -45,7 +65,7 @@ module V80
 				end
 				t = block.call(*a)
 				t.nil? ? r : Link.new([id, t], r)
-			} unless block.nil?
+			end unless block.nil?
 			@rules.push([id, f, *p])
 		end
 
@@ -62,10 +82,7 @@ module V80
 		private
 
 		def process(r, s, t)
-#			puts "#{r}"
-#			puts "#{s}"
-#			puts "#{t}"
-#			puts "-----"
+			puts "#{r}\n#{s}\n#{t}\n----------"
 
 			if s.nil? and t.nil?
 				return r
@@ -131,6 +148,14 @@ module V80
 		end
 	end
 
+	class Expression
+		attr_reader :content
+
+		def initialize(e)
+			@content = e
+		end
+	end
+
 	class Assembler
 		def initialize(g, i)
 			@groups, @ins = g, i
@@ -150,10 +175,24 @@ module V80
 				p.symbol :hex_s, /(0x|\$)[0-9a-fA-F]+/
 				p.symbol :dec_s, /[1-9]+[0-9]*/
 				p.symbol :oct_s, /0[0-7]*/
+				p.symbol :add_s, /\+/
+				p.symbol :sub_s, /\-/
+				p.symbol :mul_s, /\*/
+				p.symbol :div_s, /\//
+				p.symbol :popen, /\(/
+				p.symbol :pclose, /\)/
 				p.symbol nil, /[ \t]+/
+
+				p.rule :line, :label_declaration
+				p.rule :line, :meta_statement
+				p.rule :line, :operation_statement
 
 				p.rule :label_declaration, :label_s do |n|
 					@labels[n] = @offset
+				end
+
+				p.rule :meta_statement, :meta_s, :id_s, :op_args do |_, id, a|
+					meta(id, *a)
 				end
 
 				p.rule :operation_statement, :id_s, :op_args do |op, a|
@@ -161,7 +200,7 @@ module V80
 					
 					@ins.each do |ins, f|
 						if (m = match? ins, op, *a)
-							@output.push([f, a])
+							@output.push([f, m])
 
 							break
 						end
@@ -170,7 +209,7 @@ module V80
 					raise "Can't parse!" unless m
 				end
 
-				p.rule :op_args, :comma_s, :argument, :op_args do |_, a, o|
+				p.rule :op_args, :argument, :op_args2 do |a, o|
 					o.unshift a
 				end
 
@@ -178,41 +217,142 @@ module V80
 					[]
 				end
 
+				p.rule :op_args2, :comma_s, :argument, :op_args2 do |_, a, o|
+					o.unshift a
+				end
+
+				p.rule :op_args2 do
+					[]
+				end
+
 				p.rule :argument, :id_s do |reg|
 					[reg, @groups.find { |g| g.include? reg }]
+				end
+
+				p.rule :argument, :expr do |e|
+					Expression.new(e)
+				end
+
+				p.rule :expr, :add_e do |e|
+					e
+				end
+
+				p.rule :add_e, :mul_e do |e|
+					e
+				end
+
+				p.rule :add_e, :mul_e, :add_s, :add_e do |m, _, a|
+					[:add, m, a]
+				end
+
+				p.rule :add_e, :mul_e, :sub_s, :add_e do |m, _, a|
+					if a.is_a? Array and a[0] == :add
+						[:add, m, [:neg, a[1]], *a[2..-1]]
+					else
+						[:add, m, [:neg, a]]
+					end
+				end
+
+				p.rule :mul_e, :num_e do |e|
+					e
+				end
+
+				p.rule :mul_e, :num_e, :mul_s, :mul_e do |n, _, m|
+					[:mul, n, m]
+				end
+
+				p.rule :mul_e, :num_e, :div_s, :mul_e do |n, _, m|
+					if m.is_a? Array and m[0] == :mul
+						[:mul, n, [:inv, m[1]], *m[2..-1]]
+					else
+						[:mul, n, [:inv, m]]
+					end
+				end
+
+				p.rule :num_e, :hex_s do |h|
+					(if h[0] == '$'
+						h[1..-1]
+					else
+						h[2..-1]
+					end).to_i(16)
+				end
+
+				p.rule :num_e, :dec_s do |d|
+					d.to_i
+				end
+
+				p.rule :num_e, :oct_s do |o|
+					d.to_i(8)
+				end
+
+				p.rule :num_e, :popen, :expr, :pclose do |_1, e, _2|
+					e
 				end
 			end
 		end
 
-		def match?(s, l)
+		def match?(s, *a)
+			p = s.split(/[ ,]+/)
+
+			if p.length == a.length
+				map = []
+
+				succ = p.zip(a).all? do |l, r|
+					if l =~ /^\{(.*)\}$/
+						spec, val = *$1.split(/:/)
+
+						case spec
+							when 'GROUP'
+								if r.is_a? Array and r[1] == val
+									map.push(r[0])
+								end
+
+							when 'REG'
+								if r.is_a? Array and r[0] == val
+									map.push(r[0])
+								end
+
+							when 'CONST'
+								if r.is_a? Expression
+									map.push(r)
+								end
+
+							default
+								raise "Unknown specifier: #{spec}"
+						end
+					else
+						l.downcase == r.downcase
+					end
+				end
+
+				succ ? map : nil
+			end
+		end
+
+		def meta(id, *a)
+			puts "executing meta-command '#{id}': #{a.map(&:to_s).join(', ')}"
+		end
+
+		def evalExpr(e)
+			0
 		end
 
 		def parse(s)
 			result = []
-			
+
 			s.split(/\n/).each_with_index do |line, i|
 				line.strip!
 
 				next if line.empty?
 
-				if line[0] == '.'
-				elsif line[0] == ':'
-				else
-					m = nil
+				@parser.parse(line)
 
-					@ins.each do |ins, f|
-						if (m = match? ins, line)
-							result.push([line, f.call(m)])
-
-							break
-						end
-					end
-
-					raise "Could not parse line #{i+1}: #{line}" unless m
-				end
+				result.push([*@output.shift, line]) until @output.empty?
 			end
 
-			result
+			result.map do |f, m, l|
+				[l, f.call(m.map { |e| e.is_a? Expression ? evalExpr(e) : e })]
+			end
 		end
 	end
 
@@ -230,7 +370,7 @@ module V80
 			g.each { |id| @groups[id].push(name) }
 		end
 
-		def instruction(s, f)
+		def instruction(s, &f)
 			@ins.push([s, f])
 		end
 
@@ -240,36 +380,27 @@ module V80
 	end
 end
 
-p = V80::Parser.new
+builder = V80::Builder.new
 
-p.symbol :num, /[0-9]+(\.[0-9]+)?/
-p.symbol :add, /\+/
-p.symbol :mul, /\*/
-p.symbol nil, / +/
+builder.group('r8')
+builder.group('r16')
+builder.register('a', 'r8')
+builder.register('b', 'r8')
+builder.register('c', 'r8')
+builder.register('d', 'r8')
+builder.register('e', 'r8')
+builder.register('h', 'r8')
+builder.register('l', 'r8')
+builder.register('fa', 'r16')
+builder.register('bc', 'r16')
+builder.register('de', 'r16')
+builder.register('hl', 'r16')
 
-p.rule :e, :add_e do |e|
-	e
+builder.instruction "ld {GROUP:r8},{GROUP:r8}" do |m|
+	puts "matched ld r8,r8: [#{m.map(&:to_s).join(', ')}]"
 end
 
-p.rule :add_e, :mul_e do |e|
-	e
-end
+p = builder.build
 
-p.rule :add_e, :mul_e, :add, :add_e do |m, _, a|
-	m + a
-end
-
-p.rule :mul_e, :num_e do |e|
-	e
-end
-
-p.rule :mul_e, :num_e, :mul, :mul_e do |n, _, m|
-	n * m
-end
-
-p.rule :num_e, :num do |n|
-	n.to_f
-end
-
-puts p.parse('1 + 2 * 3 + 4')[1]
+p.parse(".org $DA80")
 
