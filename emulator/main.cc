@@ -418,6 +418,391 @@ namespace v80
 				return "inc l";
 
 			case 0x80:
+				return "add (hl)";
+
+			case 0x81:
+				return "add a";
+
+			case 0x82:
+				return "add b";
+
+			case 0x83:
+				return "add c";
+
+			case 0x84:
+				return "add d";
+
+			case 0x85:
+				return "add e";
+
+			case 0x86:
+				return "add h";
+
+			case 0x87:
+				return "add l";
+
+			case 0x88:
+				return "adc (hl)";
+
+			case 0x89:
+				return "adc a";
+
+			case 0x8A:
+				return "adc b";
+
+			case 0x8B:
+				return "adc c";
+
+			case 0x8C:
+				return "adc d";
+
+			case 0x8D:
+				return "adc e";
+
+			case 0x8E:
+				return "adc h";
+
+			case 0x8F:
+				return "adc l";
+
+			case 0x90:
+				return "sub (hl)";
+
+			case 0x91:
+				return "sub a";
+
+			case 0x92:
+				return "sub b";
+
+			case 0x93:
+				return "sub c";
+
+			case 0x94:
+				return "sub d";
+
+			case 0x95:
+				return "sub e";
+
+			case 0x96:
+				return "sub h";
+
+			case 0x97:
+				return "sub l";
+
+			case 0x98:
+				return "sbc (hl)";
+
+			case 0x99:
+				return "sbc a";
+
+			case 0x9A:
+				return "sbc b";
+
+			case 0x9B:
+				return "sbc c";
+
+			case 0x9C:
+				return "sbc d";
+
+			case 0x9D:
+				return "sbc e";
+
+			case 0x9E:
+				return "sbc h";
+
+			case 0x9F:
+				return "sbc l";
+
+			case 0xA0:
+				return "and (hl)";
+
+			case 0xA1:
+				return "and a";
+
+			case 0xA2:
+				return "and b";
+
+			case 0xA3:
+				return "and c";
+
+			case 0xA4:
+				return "and d";
+
+			case 0xA5:
+				return "and e";
+
+			case 0xA6:
+				return "and h";
+
+			case 0xA7:
+				return "and l";
+
+			case 0xA8:
+				return "or (hl)";
+
+			case 0xA9:
+				return "or a";
+
+			case 0xAA:
+				return "or b";
+
+			case 0xAB:
+				return "or c";
+
+			case 0xAC:
+				return "or d";
+
+			case 0xAD:
+				return "or e";
+
+			case 0xAE:
+				return "or h";
+
+			case 0xAF:
+				return "or l";
+
+			case 0xB0:
+				return "xor (hl)";
+
+			case 0xB1:
+				return "xor a";
+
+			case 0xB2:
+				return "xor b";
+
+			case 0xB3:
+				return "xor c";
+
+			case 0xB4:
+				return "xor d";
+
+			case 0xB5:
+				return "xor e";
+
+			case 0xB6:
+				return "xor h";
+
+			case 0xB7:
+				return "xor l";
+
+			case 0xB8:
+				return "cp (hl)";
+
+			case 0xB9:
+				return "cp a";
+
+			case 0xBA:
+				return "cp b";
+
+			case 0xBB:
+				return "cp c";
+
+			case 0xBC:
+				return "cp d";
+
+			case 0xBD:
+				return "cp e";
+
+			case 0xBE:
+				return "cp h";
+
+			case 0xBF:
+				return "cp l";
+
+			case 0xC0:
+				return "ld (hl),(hl)";
+
+			case 0xC1:
+				return "ld (hl),a";
+
+			case 0xC2:
+				return "ld (hl),b";
+
+			case 0xC3:
+				return "ld (hl),c";
+
+			case 0xC4:
+				return "ld (hl),d";
+
+			case 0xC5:
+				return "ld (hl),e";
+
+			case 0xC6:
+				return "ld (hl),h";
+
+			case 0xC7:
+				return "ld (hl),l";
+
+			case 0xC8:
+				return "ld a,(hl)";
+
+			case 0xC9:
+				return "ld a,a";
+
+			case 0xCA:
+				return "ld a,b";
+
+			case 0xCB:
+				return "ld a,c";
+
+			case 0xCC:
+				return "ld a,d";
+
+			case 0xCD:
+				return "ld a,e";
+
+			case 0xCE:
+				return "ld a,h";
+
+			case 0xCF:
+				return "ld a,l";
+
+			case 0xD0:
+				return "ld b,(hl)";
+
+			case 0xD1:
+				return "ld b,a";
+
+			case 0xD2:
+				return "ld b,b";
+
+			case 0xD3:
+				return "ld b,c";
+
+			case 0xD4:
+				return "ld b,d";
+
+			case 0xD5:
+				return "ld b,e";
+
+			case 0xD6:
+				return "ld b,h";
+
+			case 0xD7:
+				return "ld b,l";
+
+			case 0xD8:
+				return "ld c,(hl)";
+
+			case 0xD9:
+				return "ld c,a";
+
+			case 0xDA:
+				return "ld c,b";
+
+			case 0xDB:
+				return "ld c,c";
+
+			case 0xDC:
+				return "ld c,d";
+
+			case 0xDD:
+				return "ld c,e";
+
+			case 0xDE:
+				return "ld c,h";
+
+			case 0xDF:
+				return "ld c,l";
+
+			case 0xE0:
+				return "ld d,(hl)";
+
+			case 0xE1:
+				return "ld d,a";
+
+			case 0xE2:
+				return "ld d,b";
+
+			case 0xE3:
+				return "ld d,c";
+
+			case 0xE4:
+				return "ld d,d";
+
+			case 0xE5:
+				return "ld d,e";
+
+			case 0xE6:
+				return "ld d,h";
+
+			case 0xE7:
+				return "ld d,l";
+
+			case 0xE8:
+				return "ld e,(hl)";
+
+			case 0xE9:
+				return "ld e,a";
+
+			case 0xEA:
+				return "ld e,b";
+
+			case 0xEB:
+				return "ld e,c";
+
+			case 0xEC:
+				return "ld e,d";
+
+			case 0xED:
+				return "ld e,e";
+
+			case 0xEE:
+				return "ld e,h";
+
+			case 0xEF:
+				return "ld e,l";
+
+			case 0xF0:
+				return "ld h,(hl)";
+
+			case 0xF1:
+				return "ld h,a";
+
+			case 0xF2:
+				return "ld h,b";
+
+			case 0xF3:
+				return "ld h,c";
+
+			case 0xF4:
+				return "ld h,d";
+
+			case 0xF5:
+				return "ld h,e";
+
+			case 0xF6:
+				return "ld h,h";
+
+			case 0xF7:
+				return "ld h,l";
+
+			case 0xF8:
+				return "ld l,(hl)";
+
+			case 0xF9:
+				return "ld l,a";
+
+			case 0xFA:
+				return "ld l,b";
+
+			case 0xFB:
+				return "ld l,c";
+
+			case 0xFC:
+				return "ld l,d";
+
+			case 0xFD:
+				return "ld l,e";
+
+			case 0xFE:
+				return "ld l,h";
+
+			case 0xFF:
+				return "ld l,l";
+
+			default:
+				return "INVALID";
 		}
 	}
 
@@ -431,7 +816,7 @@ namespace v80
 			Periphery( );
 			void start();
 			void stop();
-			void tick();
+			u32 tick();
 			void out(u8, u8);
 			void print(std::ostream&) const;
 			u8 in(u8);
@@ -461,9 +846,18 @@ namespace v80
 	}
 
 	template<typename ... T>
-	void Periphery<T...>::tick(void)
+	u32 Periphery<T...>::tick(void)
 	{
-		FOLD(T::tick());
+		u32 ints = 0;
+		u8 f[] = { (u8) (T::tick() ? 1 : 0)... };
+
+		for(uint i = 0 ; i < sizeof(f) ; ++i)
+		{
+			if(f[i])
+				ints |= 1 << i;
+		}
+
+		return ints;
 	}
 
 	template<typename ... T>
@@ -501,7 +895,7 @@ namespace v80
 	{
 		void start( ) { }
 		void stop( ) { }
-		void tick( ) { }
+		bool tick( ) { return false; }
 		void out(u8) { }
 		u8 in( ) { return -1; }
 	};
@@ -677,11 +1071,17 @@ namespace v80
 		if(!running())
 			return;
 
+		if(mIE && mInts)
+		{
+			mIE = false;
+			mPC = 0x0008;
+		}
+
 		u8 op = next8();
 
 		(this->*mInstr[op])(op);
 
-		P::tick();
+		mInts |= P::tick();
 	}
 
 	template<typename P>
@@ -704,25 +1104,25 @@ namespace v80
 	template<typename P>
 	void System<P>::ins_ei(u8 op)
 	{
-		// TODO
+		mIE = true;
 	}
 
 	template<typename P>
 	void System<P>::ins_di(u8 op)
 	{
-		// TODO
+		mIE = false;
 	}
 
 	template<typename P>
 	void System<P>::ins_int(u8 op)
 	{
-		// TODO
+		A() = mInts;
 	}
 
 	template<typename P>
 	void System<P>::ins_rst(u8 op)
 	{
-		// TODO
+		mInts = 0;
 	}
 
 	template<typename P>
@@ -833,7 +1233,7 @@ namespace v80
 	template<typename P>
 	void System<P>::ins_math8(u8 op)
 	{
-		A() = math(op & 0x7, A(), reg8((op >> 3) & 0x3));
+		A() = math((op >> 3) & 7, A(), reg8(op & 7));
 	}
 
 	template<typename P>
@@ -920,10 +1320,12 @@ namespace v80
 		os << "# ============================================================================\n"
 		   << "# --- V80 processor:\n"
 		   << "# ============================================================================\n"
-		   << "# --- " << (running() ? "running" : "halted") << ", next op: 0x" << hex<8>(mRAM[mPC]) << "\n"
+		   << "# --- " << (running() ? "running" : "halted") << ", next: " << disassemble(mRAM + mPC) << " // 0x" << hex<8>(mRAM[mPC]) << "\n"
 		   << "# --- PC=$" << hex<16>(mPC) << ", SP=$" << hex<16>(mSP) << ", A=" << hex<8>(A()) << ", F=" << hex<8>(F())
 		   << ", B=" << hex<8>(B()) << ", C=" << hex<8>(C()) << ", D=" << hex<8>(D()) 
 		   << ", E=" << hex<8>(E()) << ", H=" << hex<8>(H()) << ", L=" << hex<8>(L()) << "\n"
+		   << "# --- Flags: " << ((F() & FLAG_CARRY) ? "C" : "NC") << "," << ((F() & FLAG_ZERO) ? "Z" : "NZ") << "," 
+		   << ((F() & FLAG_NEGATIVE) ? "N" : "P") << "\n"
 		   << "# ----------------------------------------------------------------------------\n";
 
 		P::print(os);
@@ -964,7 +1366,7 @@ namespace v80
 		class Clock : public BasePeriphery
 		{
 			public:
-				void tick() { ++mCounter; }
+				bool tick() { ++mCounter; return false; }
 				u8 in() { return mCounter; }
 				std::string status() const { return stringify("Clock - tick ", (int) mCounter); }
 			private:
@@ -983,7 +1385,7 @@ try
 		0x19, 0x05,       // ld a,5
 		0x1A, 0x03,       // ld b,3
 		// :loop
-		0x88,             // add a
+		0x81,             // add a
 		0x72,             // dec b
 		0x65, 0x04, 0x00, // jp nz,:loop
 		0x01              // halt
