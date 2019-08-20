@@ -1006,7 +1006,7 @@ namespace v80
 	template<typename P>
 	System<P>::System(void)
 	{
-		memset(this, 0, sizeof(Self));
+		memset((void *) this, 0, sizeof(Self));
 
 		mPC = mSP = 0;
 		mIE = mRunning = false;
@@ -1073,6 +1073,7 @@ namespace v80
 
 		if(mIE && mInts)
 		{
+			push(mPC);
 			mIE = false;
 			mPC = 0x0008;
 		}

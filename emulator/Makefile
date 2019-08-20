@@ -1,4 +1,4 @@
-CC=g++-6
+CC=g++
 CFLAGS=-Wall -o0 -ggdb
 TARGET=v80
 SRC=$(wildcard *.cc)
